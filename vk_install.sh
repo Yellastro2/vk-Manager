@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Installing vk manager\n"
+echo "****Installing vk manager****"
 pkg install -y python
-curl -o vk_share.py https://github.com/Yellastro2/vk-Manager/raw/main/vk_share.py
+curl -o vk_share.py https://raw.githubusercontent.com/Yellastro2/vk-Manager/main/vk_share.py
 python vk_share.py
