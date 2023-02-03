@@ -1,5 +1,5 @@
 #import vk_api
-import vk
+
 import json
 import time
 import subprocess
@@ -17,6 +17,7 @@ if "'vk'" not in installed_packages:
   # implement pip as a subprocess:
   subprocess.check_call([sys.executable, '-m', 'pip', 'install',
   'vk'])
+import vk
 s_login = '+79870848106'
 s_pass ='@gC=cB,r)BK,G64'
 s_appid = '51541407'
