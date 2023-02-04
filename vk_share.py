@@ -1,4 +1,4 @@
-#import vk_api
+#vk_manager v0.1
 
 import json
 import time
