@@ -99,7 +99,12 @@ def list_acc():
     print(q['login'])
 
 def start_spam():
-  f_msg = input('Напишите сообщение для рассылки\n>>')
+  f_input = ''
+  f_msg = ''
+  while f_input != 'DONE':
+    f_msg = f_msg + f_input+'\n'
+    f_input = input('Напишите сообщение для рассылки\n\nДля завершения сообщения напишите DONE>>')
+  #f_msg = input('Напишите сообщение для рассылки\n>>')
   f_photo = input('Напишите адрес фото (вида photo124324_35345)\n>>')
   f_pause = int(input('Напишите паузу между постами, в секундах\n>>'))
   print('Рассылка запущена\n\nДЛЯ ПРЕРЫВАНИЯ НАЖМИТЕ CTRL+C\n\n')
