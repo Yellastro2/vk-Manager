@@ -1,4 +1,4 @@
-#vk_manager v0.1
+import vk_api
 
 import json
 import time
@@ -8,7 +8,7 @@ import sys
 
 
 # process output with an API in the subprocess module:
-reqs = subprocess.check_output([sys.executable, '-m', 'pip',
+'''reqs = subprocess.check_output([sys.executable, '-m', 'pip',
 'freeze'])
 installed_packages = [r.decode().split('==')[0] for r in reqs.split()]
 #print(installed_packages)
@@ -16,10 +16,10 @@ if "'vk'" not in installed_packages:
   print('vk is apsent, installing..')
   # implement pip as a subprocess:
   subprocess.check_call([sys.executable, '-m', 'pip', 'install',
-  'vk'])
-import vk
-s_login = '+79870848106'
-s_pass ='@gC=cB,r)BK,G64'
+  'vk'])'''
+#import vk
+'''s_login = '+79870848106'
+s_pass ='@gC=cB,r)BK,G64'''
 s_appid = '51541407'
 s_key = 'f4d1bda5f4d1bda5f4d1bda5f7f7c3c83aff4d1f4d1bda5970ad41a242e9ad858671016'
 k_data = 'data'
@@ -80,11 +80,41 @@ def set_data(f_param):
         my_file.close()
     print(fData)
 
+
+def captcha_handler(captcha):
+  """ При возникновении капчи вызывается эта функция и ей передается объект
+      капчи. Через метод get_url можно получить ссылку на изображение.
+      Через метод try_again можно попытаться отправить запрос с кодом капчи
+  """
+
+  key = input("Enter captcha code {0}: ".format(captcha.get_url())).strip()
+
+  # Пробуем снова отправить запрос с капчей
+  return captcha.try_again(key)
+
+def captcha_cathcer(captcha):
+  try:
+    key = input("Enter captcha code {0}: ".format(captcha.get_url())).strip()
+    captcha.try_again(key)
+  except vk_api.exceptions.Captcha as new_captcha:
+    captcha_cathcer(new_captcha)
+
 def add_acc():
   f_log = input('Введите логин\n>>')
   f_pass = input('Введите пароль\n>>')
   try:
-    f_res = vk.DirectUserAPI(user_login=f_log,user_password=f_pass, scope='messages',v='5.131')
+    '''f_res = vk.DirectUserAPI(user_login=f_log,user_password=f_pass, scope='messages',v='5.131')
+    f_res.auth_captcha_is_needed()
+    f_res.'''
+    vk_session = vk_api.VkApi(f_log, f_pass,captcha_handler=captcha_handler)
+    vk_session.auth()
+
+    #vk = vk_session.get_api()
+
+    # print(vk.wall.post(message='Hello world!'))
+    # f_groups = vk.groups.get()
+    # print(f_groups)
+    # result = vk.wall.post(owner_id="-"+str(f_groups['items'][0]),message="Просто текст...!!!!!!!!!!!!!!!!!!!!!!!")
   except Exception as e:
     print(e)
     return
@@ -103,7 +133,7 @@ def start_spam():
   f_msg = ''
   while f_input != 'DONE':
     f_msg = f_msg + f_input+'\n'
-    f_input = input('Напишите сообщение для рассылки\n\nДля завершения сообщения напишите DONE>>')
+    f_input = input('Напишите сообщение для рассылки\n>>')
   #f_msg = input('Напишите сообщение для рассылки\n>>')
   f_photo = input('Напишите адрес фото (вида photo124324_35345)\n>>')
   f_pause = int(input('Напишите паузу между постами, в секундах\n>>'))
@@ -111,18 +141,34 @@ def start_spam():
   try:
     for q_user in m_data:
       print(f'Авторизация пользователя {q_user["login"]}')
-      q_api = vk.DirectUserAPI(user_login=q_user['login'], user_password=q_user['pass'], scope='messages',v='5.131')
-      q_groups = q_api.groups.get()['items']
-      print(f'У пользователя найдено {len(q_groups)} групп')
+      vk_session = vk_api.VkApi(q_user['login'], q_user['pass'],scope='messages,wall',captcha_handler=captcha_handler)
+      vk_session.auth()
+
+      vk = vk_session.get_api()
+
+      print(vk.wall.post(message='Hello world!'))
+      f_groups = vk.groups.get()['items']
+      print(f_groups)
+      #result = vk.wall.post(owner_id="-"+str(f_groups['items'][0]),message="Просто текст...!!!!!!!!!!!!!!!!!!!!!!!")
+
+      #q_api = vk.DirectUserAPI(user_login=q_user['login'], user_password=q_user['pass'], scope='messages',v='5.131')
+      #q_groups = q_api.groups.get()['items']
+      print(f'У пользователя найдено {len(f_groups)} групп')
       #print(q_groups)
-      for q_wall in q_groups:
+      for q_wall in f_groups:
         print(f'Отправка поста в группу {q_wall}')
-        q_api.wall.post(owner_id="-"+str(q_wall),message=f_msg,attachment=f_photo)
+        #q_api.wall.post(owner_id="-"+str(q_wall),message=f_msg,attachment=f_photo)
+        result = vk.wall.post(owner_id="-"+str(q_wall),
+                              message=f_msg,attachment=f_photo)
+
         print('отправлено!')
         time.sleep(f_pause)
+  except vk_api.exceptions.Captcha as captcha:
+    captcha_cathcer(captcha)
   except Exception as e:
     print('Рассылка прервана: ОШИБКА')
     print(e)
+
 
 
 def cycle():
