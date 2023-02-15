@@ -169,7 +169,16 @@ def start_spam():
     print('Рассылка прервана: ОШИБКА')
     print(e)
 
-
+def delete_acc():
+  f_input = input('Напишите номер акка, который удалить\n>>')
+  for q_acc in m_data:
+    if q_acc['login'] == f_input:
+      m_data.remove(q_acc)
+      print(q_acc, ' удален из памяти')
+      set_data({'users': m_data})
+      return
+  print('акаунт не найден')
+  delete_acc()
 
 def cycle():
   print(f'''Менеджер рассылки ВК
@@ -177,7 +186,8 @@ def cycle():
 Вводите команды латинскими буквами для управления:
 a - для добавления акаунта
 l - что бы увидеть список акаунтов
-s - что бы начать рассылку''')
+s - что бы начать рассылку
+d - для удаления акаунат''')
   f_key = input('>>')
   if f_key == 'a':
     add_acc()
@@ -185,6 +195,8 @@ s - что бы начать рассылку''')
     list_acc()
   elif f_key == 's':
     start_spam()
+  elif f_key == 'd':
+    delete_acc()
   cycle()
 
 def init():
