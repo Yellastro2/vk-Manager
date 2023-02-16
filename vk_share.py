@@ -1,4 +1,3 @@
-
 import vk_api
 
 import json
