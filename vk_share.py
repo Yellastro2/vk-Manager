@@ -88,7 +88,7 @@ def captcha_handler(captcha):
   """
 
   key = input("Enter captcha code {0}: ".format(captcha.get_url())).strip()
-
+  print(key)
   # Пробуем снова отправить запрос с капчей
   return captcha.try_again(key)
 
@@ -117,6 +117,7 @@ def add_acc():
     # result = vk.wall.post(owner_id="-"+str(f_groups['items'][0]),message="Просто текст...!!!!!!!!!!!!!!!!!!!!!!!")
   except Exception as e:
     print(e)
+    add_acc()
     return
 
   #print(f_res)
