@@ -1,4 +1,4 @@
-# -*- coding: cp1251 -*-
+
 import vk_api
 
 import json
@@ -37,7 +37,7 @@ m_data = []
 #print(vk.wall.post(message='Hello world!'))
 #f_groups = vk.groups.get()
 #print(f_groups)
-#result = vk.wall.post(owner_id="-"+str(f_groups['items'][0]),message="Просто текст...!!!!!!!!!!!!!!!!!!!!!!!")
+#result = vk.wall.post(owner_id="-"+str(f_groups['items'][0]),message="РџСЂРѕСЃС‚Рѕ С‚РµРєСЃС‚...!!!!!!!!!!!!!!!!!!!!!!!")
 #print(result)
 
 def get_data():
@@ -140,36 +140,42 @@ def start_spam():
   f_photo = input('Напишите адрес фото (вида photo124324_35345)\n>>')
   f_pause = int(input('Напишите паузу между постами, в секундах\n>>'))
   print('Рассылка запущена\n\nДЛЯ ПРЕРЫВАНИЯ НАЖМИТЕ CTRL+C\n\n')
-  try:
-    for q_user in m_data:
+
+  for q_user in m_data:
+    try:
       print(f'Авторизация пользователя {q_user["login"]}')
-      vk_session = vk_api.VkApi(q_user['login'], q_user['pass'],scope='messages,wall',captcha_handler=captcha_handler)
+      vk_session = vk_api.VkApi(q_user['login'], q_user['pass'], scope='messages,wall', captcha_handler=captcha_handler)
       vk_session.auth()
 
       vk = vk_session.get_api()
 
-      print(vk.wall.post(message='Hello world!'))
+
       f_groups = vk.groups.get()['items']
       print(f_groups)
-      #result = vk.wall.post(owner_id="-"+str(f_groups['items'][0]),message="Просто текст...!!!!!!!!!!!!!!!!!!!!!!!")
+      # result = vk.wall.post(owner_id="-"+str(f_groups['items'][0]),message="Просто текст...!!!!!!!!!!!!!!!!!!!!!!!")
 
-      #q_api = vk.DirectUserAPI(user_login=q_user['login'], user_password=q_user['pass'], scope='messages',v='5.131')
-      #q_groups = q_api.groups.get()['items']
+      # q_api = vk.DirectUserAPI(user_login=q_user['login'], user_password=q_user['pass'], scope='messages',v='5.131')
+      # q_groups = q_api.groups.get()['items']
       print(f'У пользователя найдено {len(f_groups)} групп')
-      #print(q_groups)
+      # print(q_groups)
       for q_wall in f_groups:
-        print(f'Отправка поста в группу {q_wall}')
-        #q_api.wall.post(owner_id="-"+str(q_wall),message=f_msg,attachment=f_photo)
-        result = vk.wall.post(owner_id="-"+str(q_wall),
-                              message=f_msg,attachment=f_photo)
+        try:
+          
+          print(f'Отправка поста в группу {q_wall}')
+          # q_api.wall.post(owner_id="-"+str(q_wall),message=f_msg,attachment=f_photo)
+          result = vk.wall.post(owner_id="-" + str(q_wall),
+                                message=f_msg, attachment=f_photo)
 
-        print('отправлено!')
+          print('отправлено!')
+        except Exception as e:
+          print('Отправка не удалась: ОШИБКА')
+          print(e)
         time.sleep(f_pause)
-  except vk_api.exceptions.Captcha as captcha:
-    captcha_cathcer(captcha)
-  except Exception as e:
-    print('Рассылка прервана: ОШИБКА')
-    print(e)
+    except vk_api.exceptions.Captcha as captcha:
+      captcha_cathcer(captcha)
+    except Exception as e:
+      print('Рассылка прервана: ОШИБКА')
+      print(e)
 
 def delete_acc():
   f_input = input('Напишите номер акка, который удалить\n>>')
