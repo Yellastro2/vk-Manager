@@ -6,6 +6,10 @@ import time
 import subprocess
 import sys
 
+# 79870344206
+
+# 79870344193
+# Poplkop1986
 
 
 # process output with an API in the subprocess module:
@@ -81,6 +85,14 @@ def set_data(f_param):
         my_file.close()
     print(fData)
 
+def auth_handler():
+
+  key = input("Enter auth code that was send to ur mobile. x to exit\n>>")
+  if key == 'x':
+    return
+  print(key)
+  # Пробуем снова отправить запрос с капчей
+  return key, True
 
 def captcha_handler(captcha):
   """ При возникновении капчи вызывается эта функция и ей передается объект
@@ -107,7 +119,12 @@ def add_acc():
     '''f_res = vk.DirectUserAPI(user_login=f_log,user_password=f_pass, scope='messages',v='5.131')
     f_res.auth_captcha_is_needed()
     f_res.'''
-    vk_session = vk_api.VkApi(f_log, f_pass,captcha_handler=captcha_handler)
+    vk_session = vk_api.VkApi(f_log, f_pass,
+                            scope = 'messages,wall,groups',
+                            captcha_handler=captcha_handler,
+                            auth_handler=auth_handler,
+                            app_id=2685278)
+    # vk_session = vk_api.VkApi(f_log, f_pass)
     vk_session.auth()
 
     #vk = vk_session.get_api()
@@ -144,13 +161,14 @@ def start_spam():
   for q_user in m_data:
     try:
       print(f'Авторизация пользователя {q_user["login"]}')
-      vk_session = vk_api.VkApi(q_user['login'], q_user['pass'], scope='messages,wall', captcha_handler=captcha_handler)
+      vk_session = vk_api.VkApi(q_user['login'], q_user['pass'], scope='messages,wall,groups', captcha_handler=captcha_handler)
       vk_session.auth()
 
       vk = vk_session.get_api()
 
 
-      f_groups = vk.groups.get()['items']
+      f_groups = vk.groups.get(filter='groups,publics')
+      f_groups = f_groups['items']
       print(f_groups)
       # result = vk.wall.post(owner_id="-"+str(f_groups['items'][0]),message="Просто текст...!!!!!!!!!!!!!!!!!!!!!!!")
 
