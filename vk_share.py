@@ -1,4 +1,4 @@
-#v 0.1
+#v 0.2
 import traceback
 
 import vk_api
