@@ -1,4 +1,6 @@
 #v 0.1
+import traceback
+
 import vk_api
 
 import json
@@ -150,7 +152,7 @@ def list_acc():
 def start_spam():
   f_input = ''
   f_msg = ''
-  while f_input != 'DONE':
+  while f_input.lower() != 'done':
     f_msg = f_msg + f_input+'\n'
     f_input = input('Напишите сообщение для рассылки\n>>')
   #f_msg = input('Напишите сообщение для рассылки\n>>')
@@ -161,7 +163,11 @@ def start_spam():
   for q_user in m_data:
     try:
       print(f'Авторизация пользователя {q_user["login"]}')
-      vk_session = vk_api.VkApi(q_user['login'], q_user['pass'], scope='messages,wall,groups', captcha_handler=captcha_handler)
+      vk_session = vk_api.VkApi(q_user['login'],
+                                q_user['pass'],
+                                scope='messages,wall,groups',
+                                captcha_handler=captcha_handler,
+                                auth_handler=auth_handler)
       vk_session.auth()
 
       vk = vk_session.get_api()
@@ -193,7 +199,7 @@ def start_spam():
       captcha_cathcer(captcha)
     except Exception as e:
       print('Рассылка прервана: ОШИБКА')
-      print(e)
+      traceback.print_exc()
 
 def delete_acc():
   f_input = input('Напишите номер акка, который удалить\n>>')
